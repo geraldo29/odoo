@@ -959,6 +959,10 @@ msgid ""
 "purchase amount, period). Rewards can be discounts (% or amount) or free "
 "products."
 msgstr ""
+"Értékesítés növelés különféle programokkal: kuponok, promóciók, "
+"ajándékkártyák, hűségkártyák. Egyedi feltételeket lehet beállítani "
+"(termékek, vevők, minimális vásárlási összeg, időszak). A jutalom lehet "
+"kedvezmény (% vagy összeg), illetve ingyenes termék is."
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.snippet_options
@@ -4401,6 +4405,9 @@ msgid ""
 "list view and click on 'Portal Access Management' option in the dropdown "
 "menu *Action*."
 msgstr ""
+"B2B módban meghívó küldéséhez nyisson meg egy kapcsolatot (vagy válasszon ki"
+" többet lista nézetben), majd kattintson a 'Portálhozzáférés kezelése' "
+"lehetőségre az *Akció* legördülő menüben."
 
 #. module: website_sale
 #: model_terms:ir.ui.view,arch_db:website_sale.snippet_options
