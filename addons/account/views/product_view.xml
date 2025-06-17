@@ -9,7 +9,7 @@
                 <list string="Products" sample="1">
                     <field name="default_code"/>
                     <field name="name"/>
-                    <field name="seller_ids" string="Sold by Vendor" widget="many2many_tags"/>
+                    <field name="seller_ids" string="Vendors" widget="one2many_tags" options="{'no_create': True}"/>
                     <field name="list_price"/>
                     <field name="taxes_id" widget="many2many_tags"/>
                     <field name="supplier_taxes_id" widget="many2many_tags"/>
