@@ -213,7 +213,7 @@ class ProjectUpdate(models.Model):
             )
             
             if not has_project_context:
-                # Return empty results to show the help message
+                # Return empty results to show the help message with redirect
                 domain = [('id', '=', False)]  # This will return no records
         
         return super().web_search_read(domain=domain, specification=specification, offset=offset, 

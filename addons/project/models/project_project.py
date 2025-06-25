@@ -745,7 +745,7 @@ class Project(models.Model):
         return action
 
     def project_update_all_action(self):
-        action = self.env['ir.actions.act_window']._for_xml_id('project.project_update_all_action')
+        action = self.env['ir.actions.act_window']._for_xml_id('project.project_update_all_action_window')
         action['display_name'] = _("%(name)s Dashboard", name=self.name)
         action['domain'] = [('project_id', '=', self.id)]
         action['context'] = {'default_project_id': self.id, 'active_id': self.id}
@@ -775,7 +775,7 @@ class Project(models.Model):
             project = self.env['project.project'].browse(target_project_id)
             if project.exists():
                 # Show the dashboard for this project
-                action = self.env['ir.actions.act_window']._for_xml_id('project.project_update_all_action')
+                action = self.env['ir.actions.act_window']._for_xml_id('project.project_update_all_action_window')
                 action['display_name'] = _("%(name)s Dashboard", name=project.name)
                 action['domain'] = [('project_id', '=', target_project_id)]
                 action['context'] = {
