@@ -195,25 +195,36 @@ class ProjectUpdate(models.Model):
     @api.model
     def web_search_read(self, domain, specification, offset=0, limit=None, order=None, count_limit=None):
         """Override to handle redirect when accessing dashboard without project context"""
-        # Check if this is being called from the dashboard action and there's no project context
         context = self.env.context
         
-        # If no project context is available and this looks like a dashboard access
-        if (not context.get('active_id') and 
-            not context.get('default_project_id') and
-            context.get('search_default_my_projects')):
-            
-            # Check if domain doesn't already filter by project_id
-            has_project_filter = domain and any(
-                isinstance(clause, (list, tuple)) and len(clause) >= 3 and 
-                clause[0] == 'project_id' and clause[1] == '=' 
-                for clause in domain
+        # If this is a dashboard access without project context, redirect immediately
+        if context.get('search_default_my_projects'):
+            # Check if we have any specific project context
+            has_project_context = (
+                context.get('active_id') or 
+                context.get('default_project_id') or
+                # Check if domain has a specific project_id filter
+                (domain and any(
+                    isinstance(clause, (list, tuple)) and len(clause) >= 3 and 
+                    clause[0] == 'project_id' and clause[1] == '=' and 
+                    isinstance(clause[2], int) and clause[2] > 0
+                    for clause in domain
+                ))
             )
             
-            if not has_project_filter:
-                # This is a dashboard access without project context
-                # Instead of showing all updates, show none and let the help message guide the user
-                domain = [('id', '=', False)]  # This will return no records
+            if not has_project_context:
+                # Force a redirect by raising a redirect exception
+                from odoo.exceptions import RedirectWarning
+                from odoo.tools.translate import _
+                
+                # Get the projects action to redirect to
+                projects_action = self.env['ir.actions.act_window']._for_xml_id('project.open_view_project_all')
+                
+                raise RedirectWarning(
+                    _("No project selected. Please select a project first to view its dashboard."),
+                    projects_action['id'],
+                    _("Go to Projects")
+                )
         
         return super().web_search_read(domain=domain, specification=specification, offset=offset, 
                                      limit=limit, order=order, count_limit=count_limit)
