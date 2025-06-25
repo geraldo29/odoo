@@ -113,7 +113,16 @@
         </field>
     </record>
 
-    <record id="project_update_all_action" model="ir.actions.act_window">
+    <!-- Smart dashboard action that handles redirect when no project is selected -->
+    <record id="project_update_all_action" model="ir.actions.server">
+        <field name="name">Dashboard</field>
+        <field name="model_id" ref="base.model_project_project"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_project_dashboard_smart_redirect()</field>
+    </record>
+
+    <!-- Window action for dashboard (used internally by the server action) -->
+    <record id="project_update_all_action_window" model="ir.actions.act_window">
         <field name="name">Dashboard</field>
         <field name="res_model">project.update</field>
         <field name="path">project-dashboard</field>

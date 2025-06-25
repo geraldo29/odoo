@@ -565,7 +565,7 @@ class Project(models.Model):
         if 'last_update_status' in vals and vals['last_update_status'] != 'to_define':
             for project in self:
                 # This does not benefit from multi create, this is to allow the default description from being built.
-                # This does seem ok since last_update_status should only be updated on one record at once.
+                # Does seem ok since last_update_status should only be updated on one record at once.
                 self.env['project.update'].with_context(default_project_id=project.id).create({
                     'name': _('Status Update - %(date)s', date=fields.Date.today().strftime(get_lang(self.env).date_format)),
                     'status': vals.get('last_update_status'),
@@ -745,11 +745,48 @@ class Project(models.Model):
         return action
 
     def project_update_all_action(self):
-        action = self.env['ir.actions.act_window']._for_xml_id('project.project_update_all_action')
+        action = self.env['ir.actions.act_window']._for_xml_id('project.project_update_all_action_window')
         action['display_name'] = _("%(name)s Dashboard", name=self.name)
         action['domain'] = [('project_id', '=', self.id)]
         action['context'] = {'default_project_id': self.id, 'active_id': self.id}
         return action
+
+    @api.model
+    def action_project_dashboard_smart_redirect(self):
+        """
+        Smart dashboard action that redirects to projects list if no project is selected,
+        or shows the dashboard for the selected project.
+        """
+        # Check if we have a project context
+        active_id = self.env.context.get('active_id')
+        project_id = self.env.context.get('default_project_id')
+        
+        # Try to get project_id from various context sources
+        if not active_id and not project_id:
+            # Check if there's an active_id in the context that might be a string
+            context_active_id = self.env.context.get('active_id')
+            if isinstance(context_active_id, str) and context_active_id.isdigit():
+                active_id = int(context_active_id)
+        
+        target_project_id = active_id or project_id
+        
+        if target_project_id:
+            # We have a project context, check if the project exists
+            project = self.env['project.project'].browse(target_project_id)
+            if project.exists():
+                # Show the dashboard for this project
+                action = self.env['ir.actions.act_window']._for_xml_id('project.project_update_all_action_window')
+                action['display_name'] = _("%(name)s Dashboard", name=project.name)
+                action['domain'] = [('project_id', '=', target_project_id)]
+                action['context'] = {
+                    'default_project_id': target_project_id, 
+                    'active_id': target_project_id,
+                    'search_default_my_projects': 1
+                }
+                return action
+        
+        # No valid project context, redirect to projects list
+        return self.env['ir.actions.act_window']._for_xml_id('project.open_view_project_all')
 
     def action_open_share_project_wizard(self):
         template = self.env.ref('project.mail_template_project_sharing', raise_if_not_found=False)
