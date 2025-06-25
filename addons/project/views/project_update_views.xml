@@ -113,12 +113,31 @@
         </field>
     </record>
 
-    <!-- Delete the existing window action first -->
-    <delete model="ir.actions.act_window" id="project_update_all_action"/>
-
-    <!-- Main dashboard action - now a server action that handles smart redirect -->
-    <record id="project_update_all_action" model="ir.actions.server" forcecreate="True">
+    <!-- Dashboard action with smart redirect functionality -->
+    <record id="project_update_all_action" model="ir.actions.act_window">
         <field name="name">Dashboard</field>
+        <field name="res_model">project.update</field>
+        <field name="path">project-dashboard</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('project_id', '!=', False)]</field>
+        <field name="context">{'search_default_my_projects': 1}</field>
+        <field name="search_view_id" ref="project_update_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+            No project selected for the dashboard!
+            </p><p>
+            To view a project dashboard, please select a project first from the Projects list.
+            </p><p>
+            <a href="/web#action=project.open_view_project_all" class="btn btn-primary">
+                Go to Projects
+            </a>
+            </p>
+        </field>
+    </record>
+
+    <!-- Server action that handles smart redirect for direct access -->
+    <record id="project_dashboard_redirect_action" model="ir.actions.server">
+        <field name="name">Dashboard Redirect</field>
         <field name="model_id" ref="project.model_project_project"/>
         <field name="state">code</field>
         <field name="code">
@@ -133,7 +152,7 @@ if target_project_id:
     project = env['project.project'].browse(target_project_id)
     if project.exists():
         # Show the dashboard for this project with proper context
-        action = env['ir.actions.act_window']._for_xml_id('project.project_update_all_action_window')
+        action = env['ir.actions.act_window']._for_xml_id('project.project_update_all_action')
         action['display_name'] = f"{project.name} Dashboard"
         action['domain'] = [('project_id', '=', target_project_id)]
         action['context'] = {
@@ -147,28 +166,6 @@ if target_project_id:
 else:
     # No project context, redirect to projects list
     action = env['ir.actions.act_window']._for_xml_id('project.open_view_project_all')
-        </field>
-    </record>
-
-    <!-- Window action for dashboard (used internally by the server action) -->
-    <record id="project_update_all_action_window" model="ir.actions.act_window">
-        <field name="name">Dashboard</field>
-        <field name="res_model">project.update</field>
-        <field name="path">project-dashboard</field>
-        <field name="view_mode">kanban,list,form</field>
-        <field name="domain">[('project_id', '!=', False)]</field>
-        <field name="context">{'search_default_my_projects': 1}</field>
-        <field name="search_view_id" ref="project_update_view_search"/>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-            No updates found. Let's create one!
-            </p><p>
-            Get a snapshot of the status of your project and share its progress with key stakeholders.
-            </p><p>
-            <a href="/web#action=project.open_view_project_all" class="btn btn-primary">
-                Go to Projects
-            </a>
-            </p>
         </field>
     </record>
 </odoo>
