@@ -743,6 +743,7 @@ class Project(models.Model):
     def project_update_all_action(self):
         action = self.env['ir.actions.act_window']._for_xml_id('project.project_update_all_action')
         action['display_name'] = _("%(name)s Dashboard", name=self.name)
+        action['context'] = {'default_project_id': self.id, 'active_id': self.id}
         return action
 
     def action_open_share_project_wizard(self):
