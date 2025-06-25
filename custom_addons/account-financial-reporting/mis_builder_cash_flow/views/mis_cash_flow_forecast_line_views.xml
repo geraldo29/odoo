@@ -10,17 +10,13 @@
                 <sheet>
                     <group col="2">
                         <!-- pylint:disable=duplicate-xml-fields -->
-                        <field
-                            name="company_ids"
-                            groups="base.group_multi_company"
-                            widget="many2many_tags"
-                        />
-                        <field name="company_ids" invisible="1" />
+                        <field name="company_id" groups="base.group_multi_company" />
+                        <field name="company_id" invisible="1" />
                         <field name="date" />
                         <field name="partner_id" />
                         <field
                             name="account_id"
-                            domain="[('company_ids', 'in', company_ids)]"
+                            domain="[('company_ids', 'in', company_id)]"
                         />
                         <field name="name" />
                         <field name="balance" />
@@ -39,7 +35,7 @@
                 <separator />
                 <field name="partner_id" />
                 <field name="account_id" />
-                <field name="company_ids" groups="base.group_multi_company" />
+                <field name="company_id" groups="base.group_multi_company" />
                 <group>
                     <filter
                         string="Account"
@@ -57,9 +53,9 @@
                         context="{'group_by':'date'}"
                     />
                     <filter
-                        string="Companies"
-                        name="group_by_company_ids"
-                        context="{'group_by':'company_ids'}"
+                        string="Company"
+                        name="group_by_company_id"
+                        context="{'group_by':'company_id'}"
                         groups="base.group_multi_company"
                     />
                 </group>
@@ -72,18 +68,14 @@
         <field name="arch" type="xml">
             <list editable="top">
                 <!-- pylint:disable=duplicate-xml-fields -->
-                <field
-                    name="company_ids"
-                    groups="base.group_multi_company"
-                    widget="many2many_tags"
-                />
-                <field name="company_ids" invisible="1" />
+                <field name="company_id" groups="base.group_multi_company" />
+                <field name="company_id" invisible="1" />
                 <field name="date" />
                 <field name="name" />
                 <field name="partner_id" />
                 <field
                     name="account_id"
-                    domain="[('company_ids', 'in', company_ids), ('deprecated', '=', False), ('hide_in_cash_flow', '=', False), ('account_type', 'in', ['asset_receivable', 'liability_payable'])]"
+                    domain="[('company_ids', 'in', company_id), ('deprecated', '=', False), ('hide_in_cash_flow', '=', False), ('account_type', 'in', ['asset_receivable', 'liability_payable'])]"
                 />
                 <field name="balance" />
             </list>

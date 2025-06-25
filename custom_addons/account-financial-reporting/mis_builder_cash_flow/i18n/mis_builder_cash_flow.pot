@@ -272,7 +272,7 @@ msgstr ""
 #. odoo-python
 #: code:addons/mis_builder_cash_flow/models/mis_cash_flow_forecast_line.py:0
 #, python-format
-msgid "The forecast line companies must overlap with the account's companies."
+msgid "The forecast line company must be one of the account's companies."
 msgstr ""
 
 #. module: mis_builder_cash_flow

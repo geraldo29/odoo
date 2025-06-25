@@ -18,23 +18,38 @@ class MisCashFlowForecastLine(models.Model):
     partner_id = fields.Many2one(comodel_name="res.partner", string="Partner")
     name = fields.Char(required=True, default="/")
     balance = fields.Float(required=True)
-    company_ids = fields.Many2many(
+    company_id = fields.Many2one(
         "res.company",
-        string="Companies",
+        string="Company",
         required=True,
-        default=lambda self: self.env.companies,
+        default=lambda self: self.env.company,
         index=True,
     )
 
-    @api.constrains("company_ids", "account_id")
-    def _check_company_ids_account_id(self):
+    @api.constrains("company_id", "account_id")
+    def _check_company_id_account_id(self):
         for line in self:
-            if line.account_id.company_ids and not (
-                line.company_ids & line.account_id.company_ids
+            # In Odoo 18, account.account uses company_ids (Many2many)
+            # Check if the forecast line's company is in the account's companies
+            if (
+                line.account_id.company_ids 
+                and line.company_id not in line.account_id.company_ids
             ):
                 raise ValidationError(
                     _(
-                        "The forecast line companies must overlap with the "
+                        "The forecast line company must be one of the "
                         "account's companies."
                     )
                 )
+
+    @api.onchange("company_id")
+    def _onchange_company_id(self):
+        """Filter accounts based on the selected company"""
+        if self.company_id:
+            return {
+                "domain": {
+                    "account_id": [
+                        ("company_ids", "in", self.company_id.id)
+                    ]
+                }
+            }

@@ -55,25 +55,25 @@ class TestCashFlow(TransactionCase):
         # Create another company
         other_company = self.env["res.company"].create({"name": "OTHER_COMPANY"})
 
-        # Try to create a forecast line with companies that don't overlap
-        # with the account's companies
+        # Try to create a forecast line with a company that is not in the
+        # account's companies
         with self.assertRaises(ValidationError):
             self.env["mis.cash_flow.forecast_line"].create(
                 {
                     "account_id": self.account.id,  # Account belongs to self.company
                     "date": Date.today(),
                     "balance": 1000,
-                    "company_ids": [(6, 0, [other_company.id])],  # Different company
+                    "company_id": other_company.id,  # Different company
                 }
             )
 
-        # Test that it works when companies do overlap
+        # Test that it works when the company is in the account's companies
         forecast_line = self.env["mis.cash_flow.forecast_line"].create(
             {
                 "account_id": self.account.id,  # Account belongs to self.company
                 "date": Date.today(),
                 "balance": 1000,
-                "company_ids": [(6, 0, [self.company.id])],  # Same company
+                "company_id": self.company.id,  # Same company
             }
         )
         self.assertTrue(forecast_line.id)  # Should be created successfully
@@ -135,7 +135,7 @@ class TestCashFlow(TransactionCase):
                 "account_id": self.account.id,
                 "date": date,
                 "balance": 1000,
-                "company_ids": [(6, 0, [self.company.id])],
+                "company_id": self.company.id,
             }
         )
         self.check_matrix(

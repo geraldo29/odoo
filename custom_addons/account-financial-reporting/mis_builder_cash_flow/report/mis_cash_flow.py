@@ -84,11 +84,7 @@ class MisCashFlow(models.Model):
             WHERE aml.parent_state != 'cancel'
             UNION ALL
             SELECT
-                -- Use row_number to create unique IDs when forecast line has
-                -- multiple companies
-                ROW_NUMBER() OVER (
-                    ORDER BY fl.id, company_rel.res_company_id
-                ) + 1000000 as id,
+                fl.id + 1000000 as id,
                 'forecast_line' as line_type,
                 NULL as move_line_id,
                 fl.account_id as account_id,
@@ -105,13 +101,11 @@ class MisCashFlow(models.Model):
                 NULL as reconciled,
                 NULL as full_reconcile_id,
                 fl.partner_id as partner_id,
-                company_rel.res_company_id as company_id,
+                fl.company_id as company_id,
                 fl.name as name,
                 'posted' as state,
                 fl.date as date
             FROM mis_cash_flow_forecast_line as fl
-            JOIN mis_cash_flow_forecast_line_res_company_rel as company_rel
-                ON fl.id = company_rel.mis_cash_flow_forecast_line_id
         """
         tools.drop_view_if_exists(self.env.cr, self._table)
         self._cr.execute(
