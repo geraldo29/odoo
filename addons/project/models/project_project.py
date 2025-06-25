@@ -727,8 +727,12 @@ class Project(models.Model):
     def action_project_task_burndown_chart_report(self):
         action = self.env['ir.actions.act_window']._for_xml_id('project.action_project_task_burndown_chart_report')
         action['display_name'] = _("%(name)s's Burndown Chart", name=self.name)
-        context = action['context'].replace('active_id', str(self.id))
-        context = ast.literal_eval(context)
+        context_str = action['context']
+        # Replace context.get('active_id') with the actual project ID
+        context_str = context_str.replace("context.get('active_id')", str(self.id))
+        # Also handle the old format for backward compatibility
+        context_str = context_str.replace('active_id', str(self.id))
+        context = ast.literal_eval(context_str)
         context.update({
             'stage_name_and_sequence_per_id': {
                 stage.id: {
@@ -776,8 +780,12 @@ class Project(models.Model):
     def action_view_tasks(self):
         action = self.env['ir.actions.act_window'].with_context(active_id=self.id)._for_xml_id('project.act_project_project_2_project_task_all')
         action['display_name'] = self.name
-        context = action['context'].replace('active_id', str(self.id))
-        context = ast.literal_eval(context)
+        context_str = action['context']
+        # Replace context.get('active_id') with the actual project ID
+        context_str = context_str.replace("context.get('active_id')", str(self.id))
+        # Also handle the old format for backward compatibility
+        context_str = context_str.replace('active_id', str(self.id))
+        context = ast.literal_eval(context_str)
         context.update({
             'create': self.active,
             'active_test': self.active
