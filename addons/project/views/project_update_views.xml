@@ -113,12 +113,41 @@
         </field>
     </record>
 
-    <!-- Smart dashboard action that handles redirect when no project is selected -->
-    <record id="project_update_all_action" model="ir.actions.server">
+    <!-- Delete the existing window action first -->
+    <delete model="ir.actions.act_window" id="project_update_all_action"/>
+
+    <!-- Main dashboard action - now a server action that handles smart redirect -->
+    <record id="project_update_all_action" model="ir.actions.server" forcecreate="True">
         <field name="name">Dashboard</field>
         <field name="model_id" ref="project.model_project_project"/>
         <field name="state">code</field>
-        <field name="code">action = model.action_project_dashboard_smart_redirect()</field>
+        <field name="code">
+# Check if we have a project context
+active_id = context.get('active_id')
+project_id = context.get('default_project_id')
+
+target_project_id = active_id or project_id
+
+if target_project_id:
+    # We have a project context, check if the project exists
+    project = env['project.project'].browse(target_project_id)
+    if project.exists():
+        # Show the dashboard for this project with proper context
+        action = env['ir.actions.act_window']._for_xml_id('project.project_update_all_action_window')
+        action['display_name'] = f"{project.name} Dashboard"
+        action['domain'] = [('project_id', '=', target_project_id)]
+        action['context'] = {
+            'default_project_id': target_project_id, 
+            'active_id': target_project_id,
+            'search_default_my_projects': 1
+        }
+    else:
+        # Invalid project, redirect to projects list
+        action = env['ir.actions.act_window']._for_xml_id('project.open_view_project_all')
+else:
+    # No project context, redirect to projects list
+    action = env['ir.actions.act_window']._for_xml_id('project.open_view_project_all')
+        </field>
     </record>
 
     <!-- Window action for dashboard (used internally by the server action) -->
