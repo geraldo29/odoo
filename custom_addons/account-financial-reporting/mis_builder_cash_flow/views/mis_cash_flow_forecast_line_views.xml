@@ -9,9 +9,7 @@
             <form string="MIS Cash Flow Forecast Line">
                 <sheet>
                     <group col="2">
-                        <!-- pylint:disable=duplicate-xml-fields -->
                         <field name="company_id" groups="base.group_multi_company" />
-                        <field name="company_id" invisible="1" />
                         <field name="date" />
                         <field name="partner_id" />
                         <field
@@ -67,9 +65,7 @@
         <field name="model">mis.cash_flow.forecast_line</field>
         <field name="arch" type="xml">
             <list editable="top">
-                <!-- pylint:disable=duplicate-xml-fields -->
                 <field name="company_id" groups="base.group_multi_company" />
-                <field name="company_id" invisible="1" />
                 <field name="date" />
                 <field name="name" />
                 <field name="partner_id" />
