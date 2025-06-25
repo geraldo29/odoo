@@ -193,7 +193,7 @@ class ProjectUpdate(models.Model):
         } for milestone in milestones]
 
     @api.model
-    def web_search_read(self, domain=None, fields=None, offset=0, limit=None, order=None, count_limit=None):
+    def web_search_read(self, domain, specification, offset=0, limit=None, order=None, count_limit=None):
         """Override to handle redirect when accessing dashboard without project context"""
         # Check if this is being called from the dashboard action and there's no project context
         context = self.env.context
@@ -215,5 +215,5 @@ class ProjectUpdate(models.Model):
                 # Instead of showing all updates, show none and let the help message guide the user
                 domain = [('id', '=', False)]  # This will return no records
         
-        return super().web_search_read(domain=domain, fields=fields, offset=offset, 
+        return super().web_search_read(domain=domain, specification=specification, offset=offset, 
                                      limit=limit, order=order, count_limit=count_limit)
