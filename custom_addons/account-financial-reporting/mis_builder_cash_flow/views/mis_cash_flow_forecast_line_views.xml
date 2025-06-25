@@ -15,6 +15,7 @@
                         <field
                             name="account_id"
                             domain="[('company_ids', 'in', company_id)]"
+                            options="{'no_quick_create': True, 'no_create_edit': True, 'no_close_on_select': True}"
                         />
                         <field name="name" />
                         <field name="balance" />
@@ -72,6 +73,7 @@
                 <field
                     name="account_id"
                     domain="[('company_ids', 'in', company_id), ('deprecated', '=', False), ('hide_in_cash_flow', '=', False), ('account_type', 'in', ['asset_receivable', 'liability_payable'])]"
+                    options="{'no_quick_create': True, 'no_create_edit': True, 'no_close_on_select': True}"
                 />
                 <field name="balance" />
             </list>
