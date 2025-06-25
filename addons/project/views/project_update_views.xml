@@ -113,45 +113,8 @@
         </field>
     </record>
 
-    <!-- Smart dashboard action that handles redirect -->
-    <record id="project_update_all_action" model="ir.actions.server">
-        <field name="name">Dashboard</field>
-        <field name="model_id" ref="project.model_project_project"/>
-        <field name="state">code</field>
-        <field name="code">
-# Smart dashboard redirect logic
-active_id = context.get('active_id')
-project_id = context.get('default_project_id')
-target_project_id = active_id or project_id
-
-if target_project_id:
-    # We have a project context, show dashboard for this project
-    project = env['project.project'].browse(target_project_id)
-    if project.exists():
-        action = {
-            'name': f"{project.name} Dashboard",
-            'type': 'ir.actions.act_window',
-            'res_model': 'project.update',
-            'view_mode': 'kanban,list,form',
-            'domain': [('project_id', '=', target_project_id)],
-            'context': {
-                'default_project_id': target_project_id,
-                'active_id': target_project_id,
-                'search_default_my_projects': 1
-            },
-            'search_view_id': env.ref('project.project_update_view_search').id,
-        }
-    else:
-        # Invalid project, redirect to projects list
-        action = env.ref('project.open_view_project_all').read()[0]
-else:
-    # No project context, redirect to projects list
-    action = env.ref('project.open_view_project_all').read()[0]
-        </field>
-    </record>
-
-    <!-- Fallback window action for cases where we need the original behavior -->
-    <record id="project_update_all_action_window" model="ir.actions.act_window">
+    <!-- Original dashboard action -->
+    <record id="project_update_all_action" model="ir.actions.act_window">
         <field name="name">Dashboard</field>
         <field name="res_model">project.update</field>
         <field name="path">project-dashboard</field>
@@ -170,11 +133,5 @@ else:
                 </a>
             </p>
         </field>
-    </record>
-
-    <!-- Client action for dashboard redirect -->
-    <record id="project_dashboard_redirect_client_action" model="ir.actions.client">
-        <field name="name">Dashboard Redirect</field>
-        <field name="tag">project_dashboard_redirect</field>
     </record>
 </odoo>
