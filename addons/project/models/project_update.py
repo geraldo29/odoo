@@ -197,7 +197,7 @@ class ProjectUpdate(models.Model):
         """Override to handle redirect when accessing dashboard without project context"""
         context = self.env.context
         
-        # If this is a dashboard access without project context, redirect immediately
+        # If this is a dashboard access without project context, return empty results
         if context.get('search_default_my_projects'):
             # Check if we have any specific project context
             has_project_context = (
@@ -213,18 +213,8 @@ class ProjectUpdate(models.Model):
             )
             
             if not has_project_context:
-                # Force a redirect by raising a redirect exception
-                from odoo.exceptions import RedirectWarning
-                from odoo.tools.translate import _
-                
-                # Get the projects action to redirect to
-                projects_action = self.env['ir.actions.act_window']._for_xml_id('project.open_view_project_all')
-                
-                raise RedirectWarning(
-                    _("No project selected. Please select a project first to view its dashboard."),
-                    projects_action['id'],
-                    _("Go to Projects")
-                )
+                # Return empty results to show the help message
+                domain = [('id', '=', False)]  # This will return no records
         
         return super().web_search_read(domain=domain, specification=specification, offset=offset, 
                                      limit=limit, order=order, count_limit=count_limit)
