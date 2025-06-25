@@ -11,6 +11,7 @@
                 <field name="description"/>
                 <field name="status"/>
                 <filter string="My Updates" name="my_updates" domain="[('user_id', '=', uid)]"/>
+                <filter string="My Projects" name="my_projects" domain="[('project_id.favorite_user_ids', 'in', uid)]"/>
                 <filter string="Followed Updates" name="followed_updates" domain="[('message_is_follower', '=', True)]"/>
                 <separator/>
                 <filter string="On Track" name="on_track" domain="[('status', '=', 'on_track')]"/>
@@ -36,7 +37,7 @@
                     </div>
                     <group>
                         <group>
-                            <field name="project_id" invisible="1"/>
+                            <field name="project_id" required="1"/>
                             <field name="color" invisible="1"/>
                             <field name="status" widget="status_with_color"/>
                             <field name="progress" widget="progressbar" options="{'editable': true}"/>
@@ -117,14 +118,18 @@
         <field name="res_model">project.update</field>
         <field name="path">project-dashboard</field>
         <field name="view_mode">kanban,list,form</field>
-        <field name="domain">[]</field>
-        <field name="context">{}</field>
+        <field name="domain">[('project_id', '!=', False)]</field>
+        <field name="context">{'search_default_my_projects': 1}</field>
         <field name="search_view_id" ref="project_update_view_search"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
             No updates found. Let's create one!
             </p><p>
             Get a snapshot of the status of your project and share its progress with key stakeholders.
+            </p><p>
+            <a href="/web#action=project.open_view_project_all" class="btn btn-primary">
+                Go to Projects
+            </a>
             </p>
         </field>
     </record>
