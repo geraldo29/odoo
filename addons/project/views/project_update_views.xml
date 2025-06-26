@@ -124,14 +124,25 @@
         <field name="search_view_id" ref="project_update_view_search"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                No project updates available!
+                No project selected for the dashboard!
             </p><p>
-                Project updates appear here when you select a specific project context.
+                Please select a project to view its dashboard. Redirecting to Projects...
             </p><p>
-                <a href="/web#action=project.open_view_project_all" class="btn btn-primary">
-                    Go to Projects
+                <a href="#" onclick="redirectToProjects(); return false;" class="btn btn-primary">
+                    Go to Projects Now
                 </a>
             </p>
+            <script type="text/javascript">
+                <![CDATA[
+                function redirectToProjects() {
+                    // Use window.location to navigate with full context
+                    window.location.href = '/web#menu_id=&action=project.open_view_project_all';
+                }
+                
+                // Auto-redirect after 2 seconds
+                setTimeout(redirectToProjects, 2000);
+                ]]>
+            </script>
         </field>
     </record>
 </odoo>

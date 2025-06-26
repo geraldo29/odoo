@@ -213,14 +213,8 @@ class ProjectUpdate(models.Model):
             )
             
             if not has_project_context:
-                # Use RedirectWarning for proper redirect with button
-                from odoo.exceptions import RedirectWarning
-                projects_action = self.env.ref('project.open_view_project_all')
-                raise RedirectWarning(
-                    'No project selected for the dashboard. Please select a project to view its dashboard.',
-                    projects_action.id,
-                    'Go to Projects'
-                )
+                # Force empty domain to show help message, which now includes automatic redirect
+                domain = [('id', '=', False)]
         
         return super().web_search_read(domain=domain, specification=specification, offset=offset, 
                                      limit=limit, order=order, count_limit=count_limit)
