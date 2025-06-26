@@ -113,7 +113,7 @@
         </field>
     </record>
 
-    <!-- Original dashboard action -->
+    <!-- Original dashboard action - kept for compatibility -->
     <record id="project_update_all_action" model="ir.actions.act_window">
         <field name="name">Dashboard</field>
         <field name="res_model">project.update</field>
@@ -128,10 +128,30 @@
             </p><p>
                 To view a project dashboard, please select a project first from the Projects list.
             </p><p>
+                <strong id="redirect-countdown">You will be redirected to Projects in 3 seconds...</strong>
+            </p><p>
                 <a href="/web#action=project.open_view_project_all" class="btn btn-primary">
-                    Go to Projects
+                    Go to Projects Now
                 </a>
             </p>
+            <script>
+                (function() {
+                    var countdown = 3;
+                    var countdownElement = document.getElementById('redirect-countdown');
+                    
+                    function updateCountdown() {
+                        if (countdown > 0) {
+                            countdownElement.textContent = 'You will be redirected to Projects in ' + countdown + ' seconds...';
+                            countdown--;
+                            setTimeout(updateCountdown, 1000);
+                        } else {
+                            window.location.href = '/web#action=project.open_view_project_all';
+                        }
+                    }
+                    
+                    updateCountdown();
+                })();
+            </script>
         </field>
     </record>
 </odoo>
