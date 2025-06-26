@@ -213,17 +213,14 @@ class ProjectUpdate(models.Model):
             )
             
             if not has_project_context:
-                # Use UserError with immediate redirect for better UX
-                from odoo.exceptions import UserError
-                # This will force the user to be redirected, but first show the help message
-                # Let's return empty results but trigger redirect in a different way
-                domain = [('id', '=', False)]
-                
-                # Try to use HTTP redirect if we're in a web context
-                from odoo.http import request
-                if request and hasattr(request, 'httprequest'):
-                    import werkzeug.exceptions
-                    raise werkzeug.exceptions.Found('/web#action=project.open_view_project_all')
+                # Use RedirectWarning for proper redirect with button
+                from odoo.exceptions import RedirectWarning
+                projects_action = self.env.ref('project.open_view_project_all')
+                raise RedirectWarning(
+                    'No project selected for the dashboard. Please select a project to view its dashboard.',
+                    projects_action.id,
+                    'Go to Projects'
+                )
         
         return super().web_search_read(domain=domain, specification=specification, offset=offset, 
                                      limit=limit, order=order, count_limit=count_limit)
