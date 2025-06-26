@@ -751,29 +751,9 @@ class Project(models.Model):
         action['domain'] = [('project_id', '=', self.id)]
         action['context'] = {
             'default_project_id': self.id, 
-            'active_id': self.id,
-            'dashboard_access': True
+            'active_id': self.id
         }
         return action
-
-    @api.model
-    def action_project_dashboard_smart_redirect(self):
-        """
-        Smart dashboard action that redirects to projects list if no project is selected,
-        or shows the dashboard for the selected project.
-        """
-        # Check if we have a project context
-        active_id = self.env.context.get('active_id')
-        default_project_id = self.env.context.get('default_project_id')
-        project_id = active_id or default_project_id
-        
-        if project_id:
-            # We have a project context, show the dashboard
-            project = self.browse(project_id)
-            return project.project_update_all_action()
-        else:
-            # No project context, redirect to projects list immediately
-            return self.env['ir.actions.act_window']._for_xml_id('project.open_view_project_all')
 
     def action_open_share_project_wizard(self):
         template = self.env.ref('project.mail_template_project_sharing', raise_if_not_found=False)
