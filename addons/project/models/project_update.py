@@ -192,38 +192,4 @@ class ProjectUpdate(models.Model):
             'old_value': mapped_result[milestone.id]['old_value'],
         } for milestone in milestones]
 
-    @api.model
-    def web_search_read(self, domain, specification, offset=0, limit=None, order=None, count_limit=None):
-        """Override to handle redirect when accessing dashboard without project context"""
-        context = self.env.context
-        
-        # If this is a dashboard access without project context, handle redirect
-        if context.get('search_default_my_projects'):
-            # Check if we have any specific project context
-            has_project_context = (
-                context.get('active_id') or 
-                context.get('default_project_id') or
-                # Check if domain has a specific project_id filter
-                (domain and any(
-                    isinstance(clause, (list, tuple)) and len(clause) >= 3 and 
-                    clause[0] == 'project_id' and clause[1] == '=' and 
-                    isinstance(clause[2], int) and clause[2] > 0
-                    for clause in domain
-                ))
-            )
-            
-            if not has_project_context:
-                # Force immediate redirect by modifying the request
-                import werkzeug.exceptions
-                from odoo.http import request
-                
-                # If we're in a web request context, do a redirect
-                if request and hasattr(request, 'httprequest'):
-                    projects_url = '/web#action=project.open_view_project_all'
-                    raise werkzeug.exceptions.Found(projects_url)
-                
-                # Fallback: return empty results to show help message
-                domain = [('id', '=', False)]
-        
-        return super().web_search_read(domain=domain, specification=specification, offset=offset, 
-                                     limit=limit, order=order, count_limit=count_limit)
+

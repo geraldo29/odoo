@@ -745,11 +745,26 @@ class Project(models.Model):
         return action
 
     def project_update_all_action(self):
-        action = self.env['ir.actions.act_window']._for_xml_id('project.project_update_all_action')
-        action['display_name'] = _("%(name)s Dashboard", name=self.name)
-        action['domain'] = [('project_id', '=', self.id)]
-        action['context'] = {'default_project_id': self.id, 'active_id': self.id}
-        return action
+        """Return dashboard action for this specific project"""
+        return {
+            'name': _("%(name)s Dashboard", name=self.name),
+            'type': 'ir.actions.act_window',
+            'res_model': 'project.update',
+            'path': 'project-dashboard',
+            'view_mode': 'kanban,list,form',
+            'domain': [('project_id', '=', self.id)],
+            'context': {
+                'default_project_id': self.id, 
+                'active_id': self.id,
+                'search_default_my_projects': 1
+            },
+            'search_view_id': self.env.ref('project.project_update_view_search').id,
+            'help': """<p class="o_view_nocontent_smiling_face">
+                No updates yet for this project!
+            </p><p>
+                Create the first update to start tracking this project's progress.
+            </p>"""
+        }
 
     @api.model
     def action_project_dashboard_smart_redirect(self):
@@ -757,8 +772,18 @@ class Project(models.Model):
         Smart dashboard action that redirects to projects list if no project is selected,
         or shows the dashboard for the selected project.
         """
-        # Use the smart server action
-        return self.env['ir.actions.server']._for_xml_id('project.project_dashboard_smart_action').run()
+        # Check if we have a project context
+        active_id = self.env.context.get('active_id')
+        default_project_id = self.env.context.get('default_project_id')
+        project_id = active_id or default_project_id
+        
+        if project_id:
+            # We have a project context, show the dashboard
+            project = self.browse(project_id)
+            return project.project_update_all_action()
+        else:
+            # No project context, redirect to projects list
+            return self.env['ir.actions.act_window']._for_xml_id('project.open_view_project_all')
 
     def action_open_share_project_wizard(self):
         template = self.env.ref('project.mail_template_project_sharing', raise_if_not_found=False)
