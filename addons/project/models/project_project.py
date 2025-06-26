@@ -757,36 +757,8 @@ class Project(models.Model):
         Smart dashboard action that redirects to projects list if no project is selected,
         or shows the dashboard for the selected project.
         """
-        # Check if we have a project context
-        active_id = self.env.context.get('active_id')
-        project_id = self.env.context.get('default_project_id')
-        
-        # Try to get project_id from various context sources
-        if not active_id and not project_id:
-            # Check if there's an active_id in the context that might be a string
-            context_active_id = self.env.context.get('active_id')
-            if isinstance(context_active_id, str) and context_active_id.isdigit():
-                active_id = int(context_active_id)
-        
-        target_project_id = active_id or project_id
-        
-        if target_project_id:
-            # We have a project context, check if the project exists
-            project = self.env['project.project'].browse(target_project_id)
-            if project.exists():
-                # Show the dashboard for this project
-                action = self.env['ir.actions.act_window']._for_xml_id('project.project_update_all_action')
-                action['display_name'] = _("%(name)s Dashboard", name=project.name)
-                action['domain'] = [('project_id', '=', target_project_id)]
-                action['context'] = {
-                    'default_project_id': target_project_id, 
-                    'active_id': target_project_id,
-                    'search_default_my_projects': 1
-                }
-                return action
-        
-        # No valid project context, redirect to projects list
-        return self.env['ir.actions.act_window']._for_xml_id('project.open_view_project_all')
+        # Use the smart server action
+        return self.env['ir.actions.server']._for_xml_id('project.project_dashboard_smart_action').run()
 
     def action_open_share_project_wizard(self):
         template = self.env.ref('project.mail_template_project_sharing', raise_if_not_found=False)

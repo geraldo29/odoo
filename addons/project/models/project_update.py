@@ -213,8 +213,17 @@ class ProjectUpdate(models.Model):
             )
             
             if not has_project_context:
-                # No project context - return empty results to show help message
-                domain = [('id', '=', False)]  # This will return no records
+                # Force immediate redirect by modifying the request
+                import werkzeug.exceptions
+                from odoo.http import request
+                
+                # If we're in a web request context, do a redirect
+                if request and hasattr(request, 'httprequest'):
+                    projects_url = '/web#action=project.open_view_project_all'
+                    raise werkzeug.exceptions.Found(projects_url)
+                
+                # Fallback: return empty results to show help message
+                domain = [('id', '=', False)]
         
         return super().web_search_read(domain=domain, specification=specification, offset=offset, 
                                      limit=limit, order=order, count_limit=count_limit)
