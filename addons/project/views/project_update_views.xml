@@ -113,7 +113,7 @@
         </field>
     </record>
 
-    <!-- Original dashboard action - with redirect logic in web_search_read -->
+    <!-- Main dashboard action - with smart redirect logic in Python -->
     <record id="project_update_all_action" model="ir.actions.act_window">
         <field name="name">Dashboard</field>
         <field name="res_model">project.update</field>
@@ -124,28 +124,14 @@
         <field name="search_view_id" ref="project_update_view_search"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                No project selected for the dashboard!
+                No project updates available!
             </p><p>
-                Please select a project to view its dashboard. You will be automatically redirected to the Projects list.
+                Project updates appear here when you select a specific project context.
             </p><p>
                 <a href="/web#action=project.open_view_project_all" class="btn btn-primary">
-                    Go to Projects Now
+                    Go to Projects
                 </a>
             </p>
-            <script type="text/javascript">
-                <![CDATA[
-                function navigateToProjects() {
-                    // Direct navigation to projects
-                    window.location.href = '/web#action=project.open_view_project_all';
-                    return false;
-                }
-                
-                // Auto-redirect after 3 seconds
-                setTimeout(function() {
-                    window.location.href = '/web#action=project.open_view_project_all';
-                }, 3000);
-                ]]>
-            </script>
         </field>
     </record>
 </odoo>

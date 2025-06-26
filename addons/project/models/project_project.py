@@ -772,7 +772,7 @@ class Project(models.Model):
             project = self.browse(project_id)
             return project.project_update_all_action()
         else:
-            # No project context, redirect to projects list
+            # No project context, redirect to projects list immediately
             return self.env['ir.actions.act_window']._for_xml_id('project.open_view_project_all')
 
     def action_open_share_project_wizard(self):
