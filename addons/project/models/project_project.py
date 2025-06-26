@@ -746,25 +746,16 @@ class Project(models.Model):
 
     def project_update_all_action(self):
         """Return dashboard action for this specific project"""
-        return {
-            'name': _("%(name)s Dashboard", name=self.name),
-            'type': 'ir.actions.act_window',
-            'res_model': 'project.update',
-            'path': 'project-dashboard',
-            'view_mode': 'kanban,list,form',
-            'domain': [('project_id', '=', self.id)],
-            'context': {
-                'default_project_id': self.id, 
-                'active_id': self.id,
-                'search_default_my_projects': 1
-            },
-            'search_view_id': self.env.ref('project.project_update_view_search').id,
-            'help': """<p class="o_view_nocontent_smiling_face">
-                No updates yet for this project!
-            </p><p>
-                Create the first update to start tracking this project's progress.
-            </p>"""
+        action = self.env['ir.actions.act_window']._for_xml_id('project.project_update_all_action')
+        action['display_name'] = _("%(name)s Dashboard", name=self.name)
+        action['domain'] = [('project_id', '=', self.id)]
+        action['context'] = {
+            'default_project_id': self.id, 
+            'active_id': self.id,
+            'search_default_my_projects': 1,
+            'dashboard_access': True
         }
+        return action
 
     @api.model
     def action_project_dashboard_smart_redirect(self):
