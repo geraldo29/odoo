@@ -213,13 +213,8 @@ class ProjectUpdate(models.Model):
             )
             
             if not has_project_context:
-                # Trigger client-side redirect using UserError with redirect action
-                from odoo.exceptions import RedirectWarning
-                raise RedirectWarning(
-                    'Please select a project to view its dashboard.',
-                    self.env.ref('project.open_view_project_all').id,
-                    'Go to Projects'
-                )
+                # Force empty domain to show help message with redirect
+                domain = [('id', '=', False)]
         
         return super().web_search_read(domain=domain, specification=specification, offset=offset, 
                                      limit=limit, order=order, count_limit=count_limit)

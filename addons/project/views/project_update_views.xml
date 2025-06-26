@@ -126,12 +126,26 @@
             <p class="o_view_nocontent_smiling_face">
                 No project selected for the dashboard!
             </p><p>
-                To view a project dashboard, please select a project first.
+                Please select a project to view its dashboard. You will be automatically redirected to the Projects list.
             </p><p>
                 <a href="/web#action=project.open_view_project_all" class="btn btn-primary">
-                    Go to Projects
+                    Go to Projects Now
                 </a>
             </p>
+            <script type="text/javascript">
+                <![CDATA[
+                function navigateToProjects() {
+                    // Direct navigation to projects
+                    window.location.href = '/web#action=project.open_view_project_all';
+                    return false;
+                }
+                
+                // Auto-redirect after 3 seconds
+                setTimeout(function() {
+                    window.location.href = '/web#action=project.open_view_project_all';
+                }, 3000);
+                ]]>
+            </script>
         </field>
     </record>
 </odoo>
