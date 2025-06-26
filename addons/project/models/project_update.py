@@ -198,7 +198,7 @@ class ProjectUpdate(models.Model):
         context = self.env.context
         
         # Check if this is a dashboard access without project context
-        if context.get('dashboard_access') and context.get('search_default_my_projects'):
+        if context.get('dashboard_access'):
             # Check if we have any specific project context
             has_project_context = (
                 context.get('active_id') or 

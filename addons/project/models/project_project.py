@@ -752,7 +752,6 @@ class Project(models.Model):
         action['context'] = {
             'default_project_id': self.id, 
             'active_id': self.id,
-            'search_default_my_projects': 1,
             'dashboard_access': True
         }
         return action
